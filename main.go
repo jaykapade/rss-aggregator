@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -9,13 +10,35 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/joho/godotenv"
+
+	"github.com/jaykapade/rss-aggregator/internal/database"
+
+	_ "github.com/lib/pq" // Import the PostgreSQL driver
 )
+
+type apiConfig struct {
+	DB *database.Queries
+}
 
 func main() {
 	godotenv.Load()
 	port := os.Getenv("PORT")
 	if port == "" {
 		log.Fatal("PORT not found")
+	}
+
+	dbURL := os.Getenv("DB_URL")
+	if dbURL == "" {
+		log.Fatal("DB_URL not found")
+	}
+
+	conn, err := sql.Open("postgres", dbURL)
+	if err != nil {
+		log.Fatal("Error connecting to database:", err)
+	}
+
+	apiCfg := apiConfig{
+		DB: database.New(conn),
 	}
 
 	router := chi.NewRouter()
@@ -32,6 +55,7 @@ func main() {
 	v1Router := chi.NewRouter()
 	v1Router.Get("/healthz", handlerReadiness)
 	v1Router.Get("/error", handlerError)
+	v1Router.Post("/users", apiCfg.handlerCreateUser)
 
 	router.Mount("/v1", v1Router)
 
@@ -41,10 +65,10 @@ func main() {
 	}
 
 	fmt.Println("Server starting on port", port)
-	err := srv.ListenAndServe()
 
+	err = srv.ListenAndServe()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Error starting server:", err)
 	}
 
 }
