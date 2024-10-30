@@ -1,0 +1,289 @@
+{
+	"info": {
+		"_postman_id": "b3bd8101-af49-44f6-ab8d-3c2ec879b108",
+		"name": "RSS Aggregator",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13225864"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\" : \"John Doe\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/v1/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by Api Key",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ApiKey f278e749f52fa598f224ec575bd1463200db7f65bd94441e2644ef2cfbaf2a9e",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/v1/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Posts by User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ApiKey f278e749f52fa598f224ec575bd1463200db7f65bd94441e2644ef2cfbaf2a9e",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/v1/posts",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"v1",
+								"posts"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Feeds",
+			"item": [
+				{
+					"name": "Create Feed",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ApiKey f278e749f52fa598f224ec575bd1463200db7f65bd94441e2644ef2cfbaf2a9e",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Example Feed\",\r\n    \"url\": \"https://example.com/test.xml\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/v1/feeds",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"v1",
+								"feeds"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Feeds",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/v1/feeds",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"v1",
+								"feeds"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Feed Follows",
+			"item": [
+				{
+					"name": "Create Feed Follows",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ApiKey f278e749f52fa598f224ec575bd1463200db7f65bd94441e2644ef2cfbaf2a9e",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"feed_id\": \"7d89a98e-1bde-4f7c-b073-3e0ebf7e1f5b\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/v1/feed_follows",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"v1",
+								"feed_follows"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Feed Follows",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ApiKey f278e749f52fa598f224ec575bd1463200db7f65bd94441e2644ef2cfbaf2a9e",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/v1/feed_follows/78fe09c3-614f-4fd0-9536-c94e7cef2193",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"v1",
+								"feed_follows",
+								"78fe09c3-614f-4fd0-9536-c94e7cef2193"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Feed Follows By User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ApiKey f278e749f52fa598f224ec575bd1463200db7f65bd94441e2644ef2cfbaf2a9e",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/v1/feed_follows",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"v1",
+								"feed_follows"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Error Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/v1/error",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"v1",
+						"error"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/v1/healthz",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"v1",
+						"healthz"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
