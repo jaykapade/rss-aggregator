@@ -2,13 +2,17 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"encoding/xml"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/jaykapade/rss-aggregator/internal/database"
 )
 
@@ -52,9 +56,39 @@ func scrapeFeed(db *database.Queries, wg *sync.WaitGroup, feed database.Feed) {
 	}
 
 	for _, item := range rssFeed.Channel.Item {
-		log.Println("Found post:", item.Title, "on feed:", feed.Name)
+		description := sql.NullString{}
+		if item.Description != "" {
+			description.String = item.Description
+			description.Valid = true
+		}
+
+		pubAt, err := parseDate(item.PubDate)
+		if err != nil {
+			log.Printf("couldn't parse date %v with err %v", item.PubDate, err)
+			continue
+		}
+		_, err = db.CreatePost(context.Background(), database.CreatePostParams{
+			ID:          uuid.New(),
+			Title:       item.Title,
+			Description: description,
+			Url:         item.Link,
+			PublishedAt: pubAt,
+			FeedID:      feed.ID,
+			CreatedAt:   time.Now().UTC(),
+			UpdatedAt:   time.Now().UTC(),
+		})
+
+		if err != nil {
+			// TODO: Find a way to skip CreatePost() if the post already exists
+			if strings.Contains(err.Error(), "duplicate key") {
+				continue
+			}
+			log.Println("Error creating post:", err)
+			continue
+		}
 	}
 	log.Printf("Feed %s collected, %v posts found", feed.Name, len(rssFeed.Channel.Item))
+
 }
 
 type RSSFeed struct {
@@ -98,4 +132,26 @@ func urlToFeed(url string) (RSSFeed, error) {
 	}
 
 	return rssFeed, nil
+}
+
+// function to handle most common date formats used in rss
+func parseDate(dateStr string) (time.Time, error) {
+	formats := []string{
+		time.RFC1123Z,
+		time.RFC1123,
+		time.RFC822Z,
+		time.RFC822,
+		"2006-01-02T15:04:05Z07:00",     // ISO 8601
+		"2006-01-02T15:04:05.000Z07:00", // ISO 8601 with milliseconds
+		"Mon, 02 Jan 2006 15:04:05 -0700",
+		"02 Jan 2006 15:04:05 -0700",
+		"2006-01-02 15:04:05",
+	}
+
+	for _, format := range formats {
+		if t, err := time.Parse(format, dateStr); err == nil {
+			return t, nil
+		}
+	}
+	return time.Time{}, fmt.Errorf("unable to parse date: %s", dateStr)
 }
