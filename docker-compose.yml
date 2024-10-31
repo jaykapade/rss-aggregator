@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rss_aggregator_app
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - DB_URL=postgres://postgres:postgres@postgres:5432/rss-aggregator?sslmode=disable
+    depends_on:
+      migrations:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: rss-aggregator
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  migrations:
+    build:
+      context: .
+      dockerfile: Dockerfile.migrations
+    environment:
+      - DB_URL=postgres://postgres:postgres@postgres:5432/rss-aggregator?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command:
+      [
+        "goose",
+        "-dir",
+        "/migrations",
+        "postgres",
+        "postgres://postgres:postgres@postgres:5432/rss-aggregator?sslmode=disable",
+        "up",
+      ]
+
+volumes:
+  pgdata:

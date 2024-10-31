@@ -88,3 +88,43 @@ The application uses the following main tables:
 
 - Generate SQL code: `sqlc generate`
 - Update database schema: `goose postgres "postgresql://localhost:5432/rss_aggregator?sslmode=disable" up`
+
+## Docker Setup
+
+### Prerequisites
+
+- Docker
+- Docker Compose
+
+### Running with Docker
+
+1. Build and start all services:
+
+   ```bash
+   docker-compose up --build
+   ```
+
+   This will:
+
+   - Start PostgreSQL database
+   - Run database migrations
+   - Start the RSS Aggregator application
+
+2. Stop all services:
+
+   ```bash
+   docker-compose down
+   ```
+
+3. Stop services and remove volumes:
+   ```bash
+   docker-compose down -v
+   ```
+
+### Docker Commands Reference
+
+- `docker-compose up --build` - Build and start all services
+- `docker-compose down` - Stop all services
+- `docker-compose down -v` - Stop services and remove volumes
+- `docker-compose ps` - View running containers
+- `docker-compose logs -f` - View logs
